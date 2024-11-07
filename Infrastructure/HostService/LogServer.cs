@@ -1,11 +1,9 @@
-﻿using RabbitMQ.Client;
+﻿using MessageProcessingService_OCSS.Domain.Entities;
+using MessageProcessingService_OCSS.Infrastructure.EFCore;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
-using System.Text.Json.Serialization;
-using MessageProcessingService_OCSS.Domain.Entities;
-using System.Net.Http.Json;
-using Newtonsoft.Json;
-using MessageProcessingService_OCSS.Infrastructure.EFCore;
 
 namespace MessageProcessingService_OCSS.Infrastructure.HostService
 {
