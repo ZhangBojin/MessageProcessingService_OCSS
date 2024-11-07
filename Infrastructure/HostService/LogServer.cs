@@ -1,19 +1,24 @@
 ﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Text.Json.Serialization;
+using LogServer_OCSS.Domain.Entities;
+using System.Net.Http.Json;
+using Newtonsoft.Json;
+using LogServer_OCSS.Infrastructure.EFCore;
 
 namespace LogServer_OCSS.Infrastructure.HostService
 {
     public class LogServer : IHostedService
     {
-        private readonly IConfiguration _configuration;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private readonly IModel _channel;
         private readonly IConnection _connection;
 
-        public LogServer(IConfiguration configuration)
+        public LogServer(IConfiguration configuration, IServiceScopeFactory serviceScopeFactory)
         {
-            _configuration = configuration;
+            _serviceScopeFactory = serviceScopeFactory;
             var factory = new ConnectionFactory()
             {
                 HostName = configuration.GetSection("RabbitMq")["HostName"],
@@ -35,13 +40,17 @@ namespace LogServer_OCSS.Infrastructure.HostService
         {
             var consumer = new EventingBasicConsumer(_channel);
 
-            consumer.Received += (model, ea) =>
+            consumer.Received += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
 
-                Console.WriteLine($"Received message: {message}");
-
+                var log = JsonConvert.DeserializeObject<Log>(message);
+                if(log == null) return;
+                using var scope = _serviceScopeFactory.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<LogServiceOcssContext>();
+                await dbContext.Logs.AddAsync(log, cancellationToken);
+                await dbContext.SaveChangesAsync(cancellationToken);
             };
 
             // 开始消费队列中的消息
