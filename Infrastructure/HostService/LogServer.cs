@@ -2,12 +2,12 @@
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json.Serialization;
-using LogServer_OCSS.Domain.Entities;
+using MessageProcessingService_OCSS.Domain.Entities;
 using System.Net.Http.Json;
 using Newtonsoft.Json;
-using LogServer_OCSS.Infrastructure.EFCore;
+using MessageProcessingService_OCSS.Infrastructure.EFCore;
 
-namespace LogServer_OCSS.Infrastructure.HostService
+namespace MessageProcessingService_OCSS.Infrastructure.HostService
 {
     public class LogServer : IHostedService
     {

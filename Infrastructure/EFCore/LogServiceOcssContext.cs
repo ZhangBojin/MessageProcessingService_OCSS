@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using LogServer_OCSS.Domain.Entities;
+using MessageProcessingService_OCSS.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace LogServer_OCSS.Infrastructure.EFCore;
+namespace MessageProcessingService_OCSS.Infrastructure.EFCore;
 
 public partial class LogServiceOcssContext : DbContext
 {

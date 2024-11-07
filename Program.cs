@@ -1,5 +1,5 @@
-using LogServer_OCSS.Infrastructure.EFCore;
-using LogServer_OCSS.Infrastructure.HostService;
+using MessageProcessingService_OCSS.Infrastructure.EFCore;
+using MessageProcessingService_OCSS.Infrastructure.HostService;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

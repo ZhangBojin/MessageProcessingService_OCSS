@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LogServer_OCSS.Domain.Entities;
+namespace MessageProcessingService_OCSS.Domain.Entities;
 
 public partial class Log
 {
