@@ -9,9 +9,16 @@ builder.Services.AddDbContext<LogServiceOcssContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("LogServiceConn"));
 });
+
+builder.Services.AddDbContext<CourseSelectionServiceOcssContext>(opt =>
+{
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("CourseSelectionServiceConn"));
+});
 #endregion
 
 builder.Services.AddHostedService<LogServer>();
+builder.Services.AddHostedService<CourseSelectionServiceHost>();
+
 
 var app = builder.Build();
 
