@@ -14,6 +14,11 @@ builder.Services.AddDbContext<CourseSelectionServiceOcssContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("CourseSelectionServiceConn"));
 });
+
+builder.Services.AddDbContext<CourseServicesOcssContext>(opt =>
+{
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("CourseServicesConn"));
+});
 #endregion
 
 builder.Services.AddHostedService<LogServer>();

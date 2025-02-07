@@ -52,14 +52,20 @@ public class CourseSelectionServiceHost: IHostedService
             var Msg = JsonConvert.DeserializeObject<SelectConfirmMqDto>(message);
             if (Msg == null) return;
             using var scope = _serviceScopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<CourseSelectionServiceOcssContext>();
-            await dbContext.Enrollments.AddAsync(new Enrollment
+            var courseSelectionServiceOcssContext = scope.ServiceProvider.GetRequiredService<CourseSelectionServiceOcssContext>()!;
+            var courseServicesOcssContext = scope.ServiceProvider.GetRequiredService<CourseServicesOcssContext>();
+            await courseSelectionServiceOcssContext.Enrollments.AddAsync(new Enrollment
             {
                 UserId = Convert.ToInt32(Msg.userId),
                 CoursesId =Convert.ToInt32(Msg.coursesId),
                 EnrollmentDate = Convert.ToDateTime(Msg.Now)
             }, cancellationToken);
-            await dbContext.SaveChangesAsync(cancellationToken);
+
+            var course = courseServicesOcssContext.CourseAvailabilities.First(c=>c.CoursesId== Convert.ToInt32(Msg.coursesId));
+            course.CurrentNum++;
+            courseServicesOcssContext.CourseAvailabilities.Update(course);
+            await courseServicesOcssContext.SaveChangesAsync(cancellationToken);
+            await courseSelectionServiceOcssContext.SaveChangesAsync(cancellationToken);
         };
 
         // 开始消费队列中的消息
