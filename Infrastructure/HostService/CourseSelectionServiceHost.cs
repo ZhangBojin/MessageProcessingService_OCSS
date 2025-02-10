@@ -46,26 +46,34 @@ public class CourseSelectionServiceHost: IHostedService
 
         consumer.Received += async (model, ea) =>
         {
-            var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
-            Console.WriteLine();
-            var Msg = JsonConvert.DeserializeObject<SelectConfirmMqDto>(message);
-            if (Msg == null) return;
-            using var scope = _serviceScopeFactory.CreateScope();
-            var courseSelectionServiceOcssContext = scope.ServiceProvider.GetRequiredService<CourseSelectionServiceOcssContext>()!;
-            var courseServicesOcssContext = scope.ServiceProvider.GetRequiredService<CourseServicesOcssContext>();
-            await courseSelectionServiceOcssContext.Enrollments.AddAsync(new Enrollment
+            try
             {
-                UserId = Convert.ToInt32(Msg.userId),
-                CoursesId =Convert.ToInt32(Msg.coursesId),
-                EnrollmentDate = Convert.ToDateTime(Msg.Now)
-            }, cancellationToken);
+                var body = ea.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
+                Console.WriteLine();
+                var Msg = JsonConvert.DeserializeObject<SelectConfirmMqDto>(message);
+                if (Msg == null) return;
+                using var scope = _serviceScopeFactory.CreateScope();
+                var courseSelectionServiceOcssContext = scope.ServiceProvider.GetRequiredService<CourseSelectionServiceOcssContext>()!;
+                var courseServicesOcssContext = scope.ServiceProvider.GetRequiredService<CourseServicesOcssContext>();
+                await courseSelectionServiceOcssContext.Enrollments.AddAsync(new Enrollment
+                {
+                    UserId = Convert.ToInt32(Msg.userId),
+                    CoursesId = Convert.ToInt32(Msg.coursesId),
+                    EnrollmentDate = Convert.ToDateTime(Msg.Now)
+                }, cancellationToken);
 
-            var course = courseServicesOcssContext.CourseAvailabilities.First(c=>c.CoursesId== Convert.ToInt32(Msg.coursesId));
-            course.CurrentNum++;
-            courseServicesOcssContext.CourseAvailabilities.Update(course);
-            await courseServicesOcssContext.SaveChangesAsync(cancellationToken);
-            await courseSelectionServiceOcssContext.SaveChangesAsync(cancellationToken);
+                var course = courseServicesOcssContext.CourseAvailabilities.First(c => c.CoursesId == Convert.ToInt32(Msg.coursesId));
+                course.CurrentNum++;
+                courseServicesOcssContext.CourseAvailabilities.Update(course);
+                await courseServicesOcssContext.SaveChangesAsync(cancellationToken);
+                await courseSelectionServiceOcssContext.SaveChangesAsync(cancellationToken);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+               return;
+            }
         };
 
         // 开始消费队列中的消息
