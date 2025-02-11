@@ -68,6 +68,8 @@ public class CourseSelectionServiceHost: IHostedService
                 courseServicesOcssContext.CourseAvailabilities.Update(course);
                 await courseServicesOcssContext.SaveChangesAsync(cancellationToken);
                 await courseSelectionServiceOcssContext.SaveChangesAsync(cancellationToken);
+                Console.WriteLine($"选课成功：：{Msg.userId}+ {Msg.coursesId}+ {Msg.Now}");
+
             }
             catch (Exception e)
             {
